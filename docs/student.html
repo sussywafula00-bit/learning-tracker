@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4b6cb7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>好学伴 - 学习打卡</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/student.css">
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="app-title">好学伴</h1>
+        <p class="app-subtitle">学习打卡与愿望激励系统</p>
+      </div>
+      <div class="header-right">
+        <div class="account-dropdown">
+          <button class="account-btn" id="accountBtn">
+            <span id="currentUsername">学生</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu" id="accountMenu">
+            <div class="dropdown-item" id="pointsDisplay">
+              <i class="fas fa-coins"></i> 积分：<span id="pointsBalance">0</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" id="openShopBtn">
+              <i class="fas fa-store"></i> 积分商店
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i> 退出登录
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <!-- 日任务/周任务分栏 -->
+    <div class="tasks-split-view">
+      <!-- 日任务 -->
+      <section class="tasks-panel daily-panel">
+        <div class="panel-header">
+          <h2><i class="fas fa-calendar-day"></i> 日任务</h2>
+          <div class="panel-actions">
+            <button class="btn btn-sm btn-secondary" id="refreshTasksBtn" title="按昨日任务生成">
+              <i class="fas fa-sync"></i>
+            </button>
+            <button class="btn btn-sm btn-primary" id="addDailyTaskBtn">
+              <i class="fas fa-plus"></i> 添加
+            </button>
+          </div>
+        </div>
+
+        <!-- 必须项 -->
+        <div class="task-section">
+          <div class="task-section-header">
+            <span class="task-badge required">必须</span>
+            <span class="task-count" id="dailyRequiredCount">0/0</span>
+          </div>
+          <div class="task-list" id="dailyRequiredList">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+
+        <!-- 选做项 -->
+        <div class="task-section">
+          <div class="task-section-header">
+            <span class="task-badge optional">选做</span>
+            <span class="task-count" id="dailyOptionalCount">0/0</span>
+          </div>
+          <div class="task-list" id="dailyOptionalList">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- 分隔线 -->
+      <div class="split-divider"></div>
+
+      <!-- 周任务 -->
+      <section class="tasks-panel weekly-panel">
+        <div class="panel-header">
+          <h2><i class="fas fa-calendar-week"></i> 周任务</h2>
+          <div class="panel-actions">
+            <button class="btn btn-sm btn-warning" id="makeupBtn">
+              <i class="fas fa-clock"></i> 补打卡
+            </button>
+            <button class="btn btn-sm btn-secondary" id="addWeeklyTaskBtn">
+              <i class="fas fa-plus"></i> 添加
+            </button>
+          </div>
+        </div>
+
+        <!-- 本周统计 -->
+        <div class="week-stats-bar">
+          <div class="week-stat-item">
+            <span class="week-stat-label">本周补打卡</span>
+            <span class="week-stat-value" id="makeupCountDisplay">0/3</span>
+          </div>
+          <div class="week-stat-item clickable" id="exemptItem">
+            <span class="week-stat-label">剩余豁免</span>
+            <span class="week-stat-value" id="exemptCountDisplay">3</span>
+          </div>
+        </div>
+
+        <!-- 本周进度 -->
+        <div class="week-progress-card">
+          <div class="progress-info">
+            <span>本周进度</span>
+            <span class="progress-percent" id="weekProgressPercent">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="weekProgressFill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- 必须项 -->
+        <div class="task-section">
+          <div class="task-section-header">
+            <span class="task-badge required">必须</span>
+            <span class="task-count" id="weeklyRequiredCount">0/0</span>
+          </div>
+          <div class="task-list" id="weeklyRequiredList">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+
+        <!-- 选做项 -->
+        <div class="task-section">
+          <div class="task-section-header">
+            <span class="task-badge optional">选做</span>
+            <span class="task-count" id="weeklyOptionalCount">0/0</span>
+          </div>
+          <div class="task-list" id="weeklyOptionalList">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 底部统计卡片 -->
+    <div class="stats-cards">
+      <div class="stat-card" id="todayTimeCard">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">今日学习</p>
+          <p class="stat-value" id="todayStudyTime">0h</p>
+        </div>
+      </div>
+      <div class="stat-card" id="sportsTimeCard">
+        <div class="stat-icon"><i class="fas fa-running"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">运动时间</p>
+          <p class="stat-value" id="sportsTime">0h</p>
+        </div>
+      </div>
+      <div class="stat-card" id="pointsCard">
+        <div class="stat-icon gold"><i class="fas fa-coins"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">积分余额</p>
+          <p class="stat-value gold" id="displayPoints">0</p>
+        </div>
+      </div>
+      <div class="stat-card clickable" id="wishCardCard">
+        <div class="stat-icon purple"><i class="fas fa-gem"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">愿望待兑</p>
+          <p class="stat-value purple" id="wishPendingCount">0</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 添加任务模态框 -->
+  <div class="modal-overlay hidden" id="taskModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="taskModalTitle">添加任务</h3>
+        <button class="modal-close" id="closeTaskModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="taskForm">
+          <input type="hidden" id="taskId">
+          <input type="hidden" id="taskType">
+
+          <div class="form-group">
+            <label class="form-label required">任务名称</label>
+            <input type="text" class="form-control" id="taskName" placeholder="输入任务名称" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">任务描述</label>
+            <textarea class="form-control" id="taskDescription" rows="2" placeholder="输入任务描述（选填）"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">计划用时</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="taskDuration" placeholder="30" min="1">
+                <span class="input-addon">分钟</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">任务分类</label>
+              <select class="form-control" id="taskCategory">
+                <option value="study">学习</option>
+                <option value="sports">运动</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">任务类型</label>
+            <select class="form-control" id="taskRequired" required>
+              <option value="required">必须完成</option>
+              <option value="optional">选做</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">从模板复制</label>
+            <select class="form-control" id="templateSelect">
+              <option value="">-- 不使用模板 --</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelTaskBtn">取消</button>
+            <button type="submit" class="btn btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 计时器模态框 -->
+  <div class="modal-overlay hidden" id="timerModal">
+    <div class="modal timer-modal">
+      <div class="timer-display">
+        <p class="timer-task-name" id="timerTaskName">任务名称</p>
+        <p class="timer-time" id="timerDisplay">00:00:00</p>
+        <p class="timer-target" id="timerTarget">目标: 30分钟</p>
+      </div>
+      <div class="timer-actions">
+        <button class="btn btn-secondary" id="pauseTimerBtn">
+          <i class="fas fa-pause"></i> 暂停
+        </button>
+        <button class="btn btn-danger" id="stopTimerBtn">
+          <i class="fas fa-stop"></i> 结束
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 学习总结模态框 -->
+  <div class="modal-overlay hidden" id="summaryModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">学习总结</h3>
+        <button class="modal-close" id="closeSummaryModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-ratings">
+          <div class="rating-item">
+            <label>专注度</label>
+            <div class="star-rating" data-type="focus">
+              <span class="star" data-value="1"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="2"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="3"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="4"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="5"><i class="fas fa-star"></i></span>
+            </div>
+          </div>
+          <div class="rating-item">
+            <label>熟练度</label>
+            <div class="star-rating" data-type="proficiency">
+              <span class="star" data-value="1"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="2"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="3"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="4"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="5"><i class="fas fa-star"></i></span>
+            </div>
+          </div>
+          <div class="rating-item">
+            <label>正确率</label>
+            <div class="star-rating" data-type="accuracy">
+              <span class="star" data-value="1"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="2"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="3"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="4"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="5"><i class="fas fa-star"></i></span>
+            </div>
+          </div>
+          <div class="rating-item">
+            <label>速度</label>
+            <div class="star-rating" data-type="speed">
+              <span class="star" data-value="1"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="2"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="3"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="4"><i class="fas fa-star"></i></span>
+              <span class="star" data-value="5"><i class="fas fa-star"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>总结</label>
+          <textarea class="form-control" id="summaryContent" rows="3" placeholder="写下你的学习心得..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="skipSummaryBtn">跳过</button>
+          <button type="button" class="btn btn-primary" id="saveSummaryBtn">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 掉落提示模态框 -->
+  <div class="modal-overlay hidden" id="dropModal">
+    <div class="modal drop-modal">
+      <div class="drop-icon">
+        <div class="drop-icon-inner animate-enter">
+          <i class="fas fa-gift"></i>
+        </div>
+      </div>
+      <h2 class="drop-title">恭喜获得</h2>
+      <div class="drop-content" id="dropContent">
+        <!-- 动态内容 -->
+      </div>
+      <button class="btn" id="closeDropBtn">收下</button>
+    </div>
+  </div>
+
+  <!-- 愿望池模态框 -->
+  <div class="modal-overlay hidden" id="wishModal">
+    <div class="modal wish-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">我的愿望池</h3>
+        <button class="modal-close" id="closeWishModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="wish-form">
+          <input type="text" class="form-control" id="wishInput" placeholder="输入你的愿望...">
+          <button class="btn btn-primary" id="addWishBtn">添加</button>
+        </div>
+        <div class="wish-list" id="wishList">
+          <!-- 动态渲染 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 补打卡模态框 -->
+  <div class="modal-overlay hidden" id="makeupModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">补打卡</h3>
+        <button class="modal-close" id="closeMakeupModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="makeup-info" id="makeupInfo">
+          <p>本周剩余补打卡次数：<span id="makeupRemaining">0</span> 次</p>
+        </div>
+        <div class="makeup-list" id="makeupList">
+          <!-- 动态渲染可补打卡任务 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 豁免申请模态框 -->
+  <div class="modal-overlay hidden" id="exemptModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">申请豁免</h3>
+        <button class="modal-close" id="closeExemptModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="exempt-info" id="exemptInfo">
+          <p>本周剩余豁免次数：<span id="exemptRemaining">0</span> 次</p>
+        </div>
+        <div class="exempt-form">
+          <div class="form-group">
+            <label class="form-label">申请日期</label>
+            <input type="date" class="form-control" id="exemptDate">
+          </div>
+          <div class="form-group">
+            <label class="form-label">申请原因（选填）</label>
+            <textarea class="form-control" id="exemptReason" rows="2" placeholder="简要说明申请豁免的原因..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelExemptBtn">取消</button>
+            <button type="button" class="btn btn-primary" id="submitExemptBtn">提交申请</button>
+          </div>
+        </div>
+        <div class="exempt-requests" id="exemptRequests">
+          <h4>申请历史</h4>
+          <div class="request-list" id="exemptRequestList">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 积分商店模态框 -->
+  <div class="modal-overlay hidden" id="shopModal">
+    <div class="modal shop-modal">
+      <div class="modal-header">
+        <h3 class="modal-title"><i class="fas fa-store"></i> 积分商店</h3>
+        <button class="modal-close" id="closeShopModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="shop-balance">
+          <i class="fas fa-coins"></i> 我的积分：<span id="shopPointsBalance">0</span>
+        </div>
+        <div class="shop-items" id="shopItems">
+          <!-- 动态渲染商品列表 -->
+        </div>
+        <div class="shop-redeem-form">
+          <input type="text" class="form-control" id="redeemName" placeholder="兑换内容（学生填写）">
+          <input type="number" class="form-control" id="redeemPoints" placeholder="所需积分" min="1">
+          <button class="btn btn-primary" id="submitRedeemBtn">申请兑换</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/points.js"></script>
+  <script src="js/drop.js"></script>
+  <script src="js/wishes.js"></script>
+  <script src="js/student.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>

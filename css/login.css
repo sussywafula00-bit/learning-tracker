@@ -1,0 +1,218 @@
+/**
+ * 登录注册样式
+ * Learning Tracker - Login Styles
+ */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--bg) 0%, #e4edf5 100%);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+/* 已保存账号 */
+.saved-accounts {
+  margin-bottom: 24px;
+}
+
+.saved-accounts-title {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.saved-accounts-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.saved-account-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.9rem;
+}
+
+.saved-account-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.saved-account-btn .saved-account-role {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.saved-account-btn:hover .saved-account-role {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.auth-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.auth-header p {
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.card-box {
+  position: relative;
+  height: auto;
+  min-height: 480px;
+}
+
+.card {
+  position: absolute;
+  width: 100%;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 40px 32px;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.card h2 {
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--text);
+}
+
+.card .form-group {
+  margin-bottom: 20px;
+}
+
+.card .form-label {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.card input,
+.card select {
+  height: 48px;
+  padding: 0 16px;
+  font-size: 1rem;
+}
+
+.card textarea {
+  padding: 12px 16px;
+}
+
+.card button[type="submit"] {
+  height: 52px;
+  font-size: 1.1rem;
+  margin-top: 8px;
+}
+
+.switch {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+.switch .link {
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.switch .link:hover {
+  text-decoration: underline;
+}
+
+/* 卡片切换动画 */
+.login-card {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.register-card {
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-box.register-mode .login-card {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card-box.register-mode .register-card {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 邀请码提示 */
+.invite-code-hint {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 12px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.toast.error {
+  background: var(--danger);
+}
+
+.toast.success {
+  background: var(--success);
+}

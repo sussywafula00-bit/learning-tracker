@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4b6cb7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>登录 - 好学伴</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>好学伴</h1>
+      <p>学习打卡与愿望激励系统</p>
+    </div>
+
+    <div class="card-box" id="cardBox">
+      <!-- 登录表单 -->
+      <div class="card login-card">
+        <h2>登录</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="loginUsername">用户名</label>
+            <input type="text" class="form-control" id="loginUsername" placeholder="请输入用户名" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">密码</label>
+            <input type="password" class="form-control" id="loginPassword" placeholder="请输入密码" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">登 录</button>
+        </form>
+        <p class="switch">
+          还没有账号？<span class="link" data-type="register">立即注册</span>
+        </p>
+      </div>
+
+      <!-- 注册表单 -->
+      <div class="card register-card">
+        <h2>注册</h2>
+        <form id="registerForm">
+          <div class="form-group">
+            <label class="form-label" for="registerUsername">用户名</label>
+            <input type="text" class="form-control" id="registerUsername" placeholder="3~15位字母数字中文" required minlength="3" maxlength="15">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="registerPassword">密码</label>
+            <input type="password" class="form-control" id="registerPassword" placeholder="至少6位" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="registerRole">角色</label>
+            <select class="form-control" id="registerRole" required>
+              <option value="parent">家长</option>
+              <option value="student">学生</option>
+            </select>
+          </div>
+          <div class="form-group" id="inviteCodeGroup" style="display: none;">
+            <label class="form-label" for="inviteCode">邀请码</label>
+            <input type="text" class="form-control" id="inviteCode" placeholder="请输入家长邀请码" maxlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">注 册</button>
+        </form>
+        <p class="switch">
+          已有账号？<span class="link" data-type="login">立即登录</span>
+        </p>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/login.js"></script>
+  <script>
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>

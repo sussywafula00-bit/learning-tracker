@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#4b6cb7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>好学伴 - 家长端</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/parent.css">
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="app-title">好学伴</h1>
+        <p class="app-subtitle">家长端</p>
+      </div>
+      <div class="header-right">
+        <div class="student-tabs" id="studentTabs">
+          <!-- 动态渲染 -->
+        </div>
+        <div class="account-dropdown">
+          <button class="account-btn" id="accountBtn">
+            <span id="currentUsername">家长</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu" id="accountMenu">
+            <div class="dropdown-item" id="inviteCodeDisplay">
+              <i class="fas fa-ticket-alt"></i> 邀请码：<span id="inviteCode">------</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i> 退出登录
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <!-- 概览统计 -->
+    <div class="overview-cards">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">今日学习</p>
+          <p class="stat-value" id="todayStudyTime">0h</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fas fa-running"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">今日运动</p>
+          <p class="stat-value" id="todaySportsTime">0h</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon gold"><i class="fas fa-coins"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">积分余额</p>
+          <p class="stat-value gold" id="pointsBalance">0</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple"><i class="fas fa-gem"></i></div>
+        <div class="stat-info">
+          <p class="stat-label">待审批愿望</p>
+          <p class="stat-value purple" id="pendingWishes">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 标签页内容 -->
+    <div class="content-tabs">
+      <!-- 标签页导航 -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="overview">学习概览</button>
+        <button class="tab-btn" data-tab="tracking">时长详情</button>
+        <button class="tab-btn" data-tab="wishes">愿望审批</button>
+        <button class="tab-btn" data-tab="redeem">兑换审批</button>
+        <button class="tab-btn" data-tab="drops">掉落设置</button>
+        <button class="tab-btn" data-tab="exempt">豁免审批</button>
+        <button class="tab-btn" data-tab="settings">设置</button>
+      </div>
+
+      <!-- 学习概览 -->
+      <section class="tab-content active" id="overviewTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-chart-bar"></i> 学习数据</h3>
+            <button class="btn btn-sm btn-secondary" id="exportTrackingBtn">
+              <i class="fas fa-download"></i> 导出时长
+            </button>
+          </div>
+          <div class="tracking-summary" id="trackingSummary">
+            <p class="text-light">暂无数据</p>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-clipboard-list"></i> 今日任务完成情况</h3>
+          </div>
+          <div class="daily-completion" id="dailyCompletion">
+            <p class="text-light">暂无数据</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 时长详情 -->
+      <section class="tab-content" id="trackingTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-history"></i> 切出时长记录</h3>
+          </div>
+          <div class="tracking-filters">
+            <input type="date" class="form-control" id="trackingStartDate">
+            <span>至</span>
+            <input type="date" class="form-control" id="trackingEndDate">
+            <button class="btn btn-primary" id="filterTrackingBtn">筛选</button>
+          </div>
+          <div class="tracking-list" id="trackingList">
+            <p class="text-light">暂无数据</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 愿望审批 -->
+      <section class="tab-content" id="wishesTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-gem"></i> 愿望审批</h3>
+          </div>
+          <div class="wish-approval-list" id="wishApprovalList">
+            <p class="text-light">暂无待审批愿望</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 积分兑换审批 -->
+      <section class="tab-content" id="redeemTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-coins"></i> 积分兑换审批</h3>
+          </div>
+          <div class="redeem-approval-list" id="redeemApprovalList">
+            <p class="text-light">暂无待审批兑换申请</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 掉落设置 -->
+      <section class="tab-content" id="dropsTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-gift"></i> 每周掉落设置</h3>
+            <button class="btn btn-sm btn-secondary" id="addDropWishBtn">
+              <i class="fas fa-plus"></i> 添加可掉落愿望
+            </button>
+          </div>
+          <p class="text-light mb-3">设置学生每周可能掉落的愿望卡，家长指定掉落项目</p>
+          <div class="drop-wish-list" id="dropWishList">
+            <p class="text-light">暂无可掉落愿望</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 豁免审批 -->
+      <section class="tab-content" id="exemptTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-shield-alt"></i> 豁免审批</h3>
+          </div>
+          <div class="exempt-approval-list" id="exemptApprovalList">
+            <p class="text-light">暂无待审批豁免申请</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 设置 -->
+      <section class="tab-content" id="settingsTab">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-cog"></i> 设置</h3>
+          </div>
+          <div class="settings-list">
+            <div class="setting-item">
+              <div class="setting-info">
+                <p class="setting-label">每周补打卡次数</p>
+                <p class="setting-desc">学生每周可补打卡的最大次数</p>
+              </div>
+              <div class="setting-control">
+                <input type="number" class="form-control" id="makeupCount" value="3" min="0" max="10">
+              </div>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <p class="setting-label">当日豁免次数</p>
+                <p class="setting-desc">每周可豁免的最大次数</p>
+              </div>
+              <div class="setting-control">
+                <input type="number" class="form-control" id="exemptCount" value="3" min="0" max="10">
+              </div>
+            </div>
+            <div class="setting-item">
+              <button class="btn btn-primary" id="saveSettingsBtn">保存设置</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-tools"></i> 数据管理</h3>
+          </div>
+          <div class="data-actions">
+            <button class="btn btn-secondary" id="exportDataBtn">
+              <i class="fas fa-download"></i> 导出全部数据
+            </button>
+            <button class="btn btn-danger" id="clearDataBtn">
+              <i class="fas fa-trash"></i> 清空学习计划
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 愿望审批模态框 -->
+  <div class="modal-overlay hidden" id="wishModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">审批愿望</h3>
+        <button class="modal-close" id="closeWishModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="wish-detail">
+          <p class="wish-student">来自：<span id="wishStudentName">学生</span></p>
+          <p class="wish-content" id="wishContent">愿望内容</p>
+        </div>
+        <div class="form-group">
+          <label>审批操作</label>
+          <div class="approval-actions">
+            <button class="btn btn-success" id="approveWishBtn">
+              <i class="fas fa-check"></i> 批准
+            </button>
+            <button class="btn btn-danger" id="rejectWishBtn">
+              <i class="fas fa-times"></i> 拒绝
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 豁免审批模态框 -->
+  <div class="modal-overlay hidden" id="exemptModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">审批豁免</h3>
+        <button class="modal-close" id="closeExemptModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="exempt-detail">
+          <p class="exempt-student">来自：<span id="exemptStudentName">学生</span></p>
+          <p class="exempt-date">申请日期：<span id="exemptDateDisplay">-</span></p>
+          <p class="exempt-reason">申请原因：<span id="exemptReasonDisplay">-</span></p>
+        </div>
+        <div class="form-group">
+          <label>审批操作</label>
+          <div class="approval-actions">
+            <button class="btn btn-success" id="approveExemptBtn">
+              <i class="fas fa-check"></i> 批准
+            </button>
+            <button class="btn btn-danger" id="rejectExemptBtn">
+              <i class="fas fa-times"></i> 拒绝
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 积分兑换审批模态框 -->
+  <div class="modal-overlay hidden" id="redeemModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">审批积分兑换</h3>
+        <button class="modal-close" id="closeRedeemModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="redeem-detail">
+          <p class="redeem-student">来自：<span id="redeemStudentName">学生</span></p>
+          <p class="redeem-content">兑换内容：<span id="redeemContentDisplay">-</span></p>
+          <p class="redeem-points">消耗积分：<span id="redeemPointsDisplay">-</span></p>
+        </div>
+        <div class="form-group">
+          <label>审批操作</label>
+          <div class="approval-actions">
+            <button class="btn btn-success" id="approveRedeemBtn">
+              <i class="fas fa-check"></i> 批准
+            </button>
+            <button class="btn btn-danger" id="rejectRedeemBtn">
+              <i class="fas fa-times"></i> 拒绝
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加可掉落愿望模态框 -->
+  <div class="modal-overlay hidden" id="addDropWishModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">添加可掉落愿望</h3>
+        <button class="modal-close" id="closeAddDropWishModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-light mb-3">选择学生已批准的愿望，这些愿望可以在每周掉落时被随机选中</p>
+        <div class="form-group">
+          <label>选择学生</label>
+          <select class="form-control" id="dropWishStudentSelect">
+            <option value="">请选择学生</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>选择愿望</label>
+          <select class="form-control" id="dropWishSelect">
+            <option value="">请先选择学生</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary" id="confirmAddDropWishBtn">
+            <i class="fas fa-plus"></i> 添加
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/points.js"></script>
+  <script src="js/wishes.js"></script>
+  <script src="js/parent.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>
