@@ -165,6 +165,36 @@ class Drop {
     Storage.saveSettings(settings);
   }
 
+  // 学生登录时检查并触发掉落（无随机跳过，确保每次登录都能检查）
+  static checkAndTriggerWeeklyDrop() {
+    const user = Auth.getCurrentUser();
+    if (!user || !Auth.isStudent()) return;
+
+    const settings = Storage.getSettings();
+    if (!settings.weeklyDrops) settings.weeklyDrops = {};
+
+    const lastDrop = settings.weeklyDrops[user.id];
+    const today = Utils.getToday();
+    const weekStart = Utils.formatDate(Utils.getWeekStart());
+
+    // 本周已掉落则跳过
+    if (lastDrop && lastDrop.week === weekStart) {
+      return;
+    }
+
+    // 本周未掉落，立即触发（无随机跳过）
+    const dropCount = (lastDrop && lastDrop.week === weekStart) ? lastDrop.count : 0;
+
+    this.triggerWeeklyPointsDrop();
+
+    settings.weeklyDrops[user.id] = {
+      week: weekStart,
+      date: today,
+      count: dropCount + 1
+    };
+    Storage.saveSettings(settings);
+  }
+
   static scheduleWeeklyDrop() {
     const now = new Date();
 

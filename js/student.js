@@ -36,6 +36,10 @@ class StudentApp {
 
       this.render();
       this.bindEvents();
+
+      // 检查并触发本周掉落
+      Drop.checkAndTriggerWeeklyDrop();
+      // 设置每周掉落定时器
       Drop.scheduleWeeklyDrop();
     } catch (error) {
       console.error('StudentApp.init error:', error);
