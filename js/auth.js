@@ -65,7 +65,7 @@ class Auth {
         };
         Storage.saveUser(user);
         Storage.savePoint({
-          userId: userId,
+          studentId: userId,
           type: 'init',
           amount: 0,
           balance: 0,
