@@ -644,7 +644,16 @@ class ParentApp {
   static renderRedeemApprovalList() {
     const container = document.getElementById('redeemApprovalList');
     const rewards = Storage.getRewards ? Storage.getRewards() : [];
-    const pending = rewards.filter(r => r.status === 'pending');
+
+    // 获取当前家长的学生ID列表
+    const user = Auth.getCurrentUser();
+    const students = Storage.getUsers().filter(u => u.parentId === user.id);
+    const studentIds = students.map(s => s.id);
+
+    // 只显示当前家长关联学生的兑换申请
+    const pending = rewards.filter(r =>
+      r.status === 'pending' && studentIds.includes(r.studentId)
+    );
 
     if (pending.length === 0) {
       container.innerHTML = '<p class="text-light">暂无待审批兑换申请</p>';
@@ -685,11 +694,20 @@ class ParentApp {
     const reward = rewards.find(r => r.id === this.currentRedeemId);
     if (!reward) return;
 
+    // 扣除积分
     Points.deduct(reward.points, '兑换奖励', reward.studentId);
 
+    // 更新兑换记录状态
     reward.status = 'redeemed';
     reward.redeemedAt = Date.now();
-    Storage.saveReward ? Storage.saveReward(reward) : null;
+
+    // 保存更新后的兑换记录
+    const allRewards = Storage.getRewards();
+    const index = allRewards.findIndex(r => r.id === this.currentRedeemId);
+    if (index >= 0) {
+      allRewards[index] = reward;
+      localStorage.setItem('lt_rewards', JSON.stringify(allRewards));
+    }
 
     this.closeRedeemModal();
     this.renderRedeemApprovalList();
@@ -705,7 +723,14 @@ class ParentApp {
 
     reward.status = 'rejected';
     reward.redeemedAt = Date.now();
-    Storage.saveReward ? Storage.saveReward(reward) : null;
+
+    // 保存更新后的兑换记录
+    const allRewards = Storage.getRewards();
+    const index = allRewards.findIndex(r => r.id === this.currentRedeemId);
+    if (index >= 0) {
+      allRewards[index] = reward;
+      localStorage.setItem('lt_rewards', JSON.stringify(allRewards));
+    }
 
     this.closeRedeemModal();
     this.renderRedeemApprovalList();
