@@ -723,6 +723,13 @@ class StudentApp {
     document.getElementById('pointsBalance').textContent = balance;
     document.getElementById('displayPoints').textContent = balance;
   }
+
+  static refreshPointsBalance() {
+    const balance = Points.getBalance();
+    document.getElementById('pointsBalance').textContent = balance;
+    document.getElementById('displayPoints').textContent = balance;
+    Utils.showToast(`积分余额：${balance}`, 'success');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
