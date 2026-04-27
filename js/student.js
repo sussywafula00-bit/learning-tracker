@@ -718,6 +718,10 @@ class StudentApp {
         toast.classList.remove('show');
       }, 2000);
     }
+    // 更新余额显示
+    const balance = Points.getBalance();
+    document.getElementById('pointsBalance').textContent = balance;
+    document.getElementById('displayPoints').textContent = balance;
   }
 }
 
