@@ -45,6 +45,10 @@ class Storage {
     return data ? JSON.parse(data) : null;
   }
 
+  static saveCurrentUser(user) {
+    localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+  }
+
   static clearCurrentUser() {
     localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
   }

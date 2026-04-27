@@ -74,7 +74,8 @@ class Auth {
 
         this.currentUser = user;
         this.userRole = role;
-        Storage.saveUser(user); // 保存到 localStorage
+        Storage.saveUser(user);
+        Storage.saveCurrentUser(user); // 保存当前登录用户
 
         return { success: true, user: user };
       } else if (role === this.ROLES.PARENT) {
@@ -120,7 +121,8 @@ class Auth {
     if (user) {
       this.currentUser = user;
       this.userRole = user.role;
-      Storage.saveUser(user); // 保存到 localStorage
+      Storage.saveUser(user);
+      Storage.saveCurrentUser(user); // 保存当前登录用户
       return { success: true, user: user };
     }
 
