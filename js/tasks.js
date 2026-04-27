@@ -569,6 +569,10 @@ class TaskManager {
     records[index] = record;
     Storage.saveRecords(records);
 
+    // 触发积分掉落
+    TaskManager.checkDrops(record);
+    TaskManager.checkWeeklyCompletion();
+
     return { success: true, record: record };
   }
 

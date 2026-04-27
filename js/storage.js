@@ -156,7 +156,7 @@ class Storage {
   }
 
   static getPointsByUser(userId) {
-    return this.getPoints().filter(p => p.userId === userId);
+    return this.getPoints().filter(p => p.studentId === userId);
   }
 
   static savePoint(point) {
