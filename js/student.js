@@ -703,6 +703,18 @@ class StudentApp {
       return;
     }
 
+    const user = Auth.getCurrentUser();
+    const reward = {
+      id: Utils.generateId(),
+      studentId: user.id,
+      studentUsername: user.username,
+      name: name,
+      points: points,
+      status: 'pending',
+      createdAt: Date.now()
+    };
+    Storage.saveReward(reward);
+
     Utils.showToast('兑换申请已提交', 'success');
     document.getElementById('redeemName').value = '';
     document.getElementById('redeemPoints').value = '';
